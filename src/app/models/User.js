@@ -11,7 +11,7 @@ class User extends Model {
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
         type: Sequelize.STRING,
-        cpf: Sequelize.STRING, 
+        cpf: Sequelize.STRING,
       },
       {
         sequelize,
@@ -24,7 +24,7 @@ class User extends Model {
       }
     });
   }
-  
+
   static associate(models) {
     this.hasMany(models.Subscription, { foreignKey: 'user_id', as: 'subscriptions' });
     this.hasMany(models.Event, { foreignKey: 'user_id', as: 'events' });
