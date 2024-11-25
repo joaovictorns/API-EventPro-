@@ -7,9 +7,9 @@ const schema = {
 		locale: Yup.string().required(),
 	}),
 	update: Yup.object().shape({
-		title: Yup.string(),
-		locale: Yup.string(),
-		description: Yup.string(),
+		title: Yup.string().nullable(),
+		locale: Yup.string().nullable(),
+		description: Yup.string().nullable()
 	})
 };
 

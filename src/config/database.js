@@ -3,6 +3,7 @@ module.exports = {
 	host: 'localhost',
 	username: 'postgres',
 	password: 'Jvns1202',
+	port: 5439,
 	database: 'users',
 	define: {
 		timestamps: true,

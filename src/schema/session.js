@@ -11,5 +11,5 @@ const schema = {
 };
 
 export default {
-	store: schema.store,
+	store: schema.store
 };

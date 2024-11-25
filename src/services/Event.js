@@ -1,5 +1,5 @@
-import Event from '../models/Event';
-import User from '../models/User';
+import Event from '../../src/app/models/Event';
+import User from '../../src/app/models/User';
 
 class EventService {
 	async store(req, res) {
@@ -15,14 +15,14 @@ class EventService {
 
 		const { title, description, locale } = req.body;
 
-		const events = await Event.create({
+		const event = await Event.create({
 			user_id: req.userId,
 			title,
 			description,
 			locale,
 		});
 
-		return res.json(events);
+		return event;
 	};
 
 	async index(req, res) {
@@ -30,7 +30,7 @@ class EventService {
 			where: { user_id: req.userId, deleted: false },
 		});
 
-		return res.json(events);
+		return events;
 	};
 
 	async update(req, res) {

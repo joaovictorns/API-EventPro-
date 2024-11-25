@@ -39,7 +39,7 @@ class SessionService {
 				id,
 				name,
 				email: user.email,
-				cpf: user.cpf,
+				cpf: user.cpf
 			},
 			token: jwt.sign({ id }, authConfig.secret, {
 				expiresIn: authConfig.expiresIn,

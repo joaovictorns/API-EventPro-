@@ -1,5 +1,5 @@
 import EventSchema from '../../schema/event';
-import EventService from '../../services/User';
+import EventService from '../../services/Event';
 
 
 class EventController {
@@ -10,15 +10,23 @@ class EventController {
 
 		try {
 			await EventService.store(req);
+
+			return res.status(201).json({ success: 'Event successfully registered.' });
 		} catch (error) {
+			console.log(error);
+
 			return res.status(400).json({ error: 'Event already exists.' })
 		}
 	};
 
 	async index(req, res) {
 		try {
-			await EventService.index(req);
+			const events = await EventService.index(req);
+
+			return res.status(201).json({ events });
 		} catch (error) {
+			console.log(error);
+
 			return res.status(400).json({ error: 'The event cannot be listed.' })
 		}
 	};
