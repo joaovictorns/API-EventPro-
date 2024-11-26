@@ -12,9 +12,18 @@ const schema = {
 		name: Yup.string(),
 		email: Yup.string().email(),
 		oldPassword: Yup.string().min(6),
-		password: Yup.string().min(6).when('oldPassword', (oldPassword, field) => oldPassword ? field.required() : field),
-		confirmPassword: Yup.string().when('password', (password, field) => password ? field.required().oneOf([Yup.ref('password')]) : field)
-	})
+		password: Yup.string()
+			.min(6)
+			.when('oldPassword', (oldPassword, schema) =>
+				oldPassword ? schema.required('Password is required when oldPassword is provided') : schema
+			),
+		confirmPassword: Yup.string()
+			.when('password', (password, schema) =>
+				password
+					? schema.required('Confirm password is required').oneOf([Yup.ref('password')], 'Passwords must match')
+					: schema
+			),
+	}),
 };
 
 export default {

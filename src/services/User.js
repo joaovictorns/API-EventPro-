@@ -3,7 +3,7 @@ import User from "../app/models/User";
 import { Op } from 'sequelize';
 class UserService {
 	async store(data) {
-		const userExist = await User.findOne({ 
+		const userExist = await User.findOne({
 			where: {
 				[Op.or]: [{ email: data.email }, { cpf: data.cpf }]
 			}
@@ -12,7 +12,7 @@ class UserService {
 		if (userExist) {
 			throw new Error('User already exists.');
 		}
-		
+
 		if (data.type === 'admin') {
 			const adminExist = await User.findOne({ where: { type: 'admin' } });
 
@@ -27,49 +27,55 @@ class UserService {
 	}
 
 	async update(req, res) {
-		const { email, oldPassword, name, cpf } = req.body;
-	
-		const user = await User.findByPk(req.userId);
-	
+		const { email, oldPassword, cpf } = req.body;
+
+		const user = await User.findByPk(req.params.id);
+
 		if (email && email !== user.email) {
 			const userExist = await User.findOne({
 				where: { email },
 			});
-	
+
 			if (userExist) {
 				return res.status(400).json({ error: 'User already exists.' });
 			}
 		}
-	
+
 		if (cpf && cpf !== user.cpf) {
 			const cpfRegex = /^[0-9]{11}$/;
-	
+
 			if (!cpfRegex.test(cpf)) {
-				return res.status(400).json({ error: 'CPF must have exactly 11 digits and only numbers.' });
+				throw new Error('CPF must have exactly 11 digits and only numbers.');
 			}
-	
-			const cpfExist = await User.findOne({
+
+			const userExists = await User.findOne({
 				where: { cpf },
 			});
-	
-			if (cpfExist) {
-				return res.status(400).json({ error: 'CPF already exists.' });
+
+			if (userExists) {
+				return res.status(400).json({ error: 'User already exists.' });
 			}
 		}
-	
+
 		if (oldPassword && !(await user.checkPassword(oldPassword))) {
 			return res.status(401).json({ error: 'Password is incorrect' });
 		}
-	
+
 		try {
-			const updatedUser = await user.update(req.body);
-	
-			return res.status(200).json({ 
-				message: 'User updated successfully.', 
-				user: updatedUser 
+			const updatedUser = await User.update({
+				...req.body
+			}, {
+				where: { id: req.params.id }
+			});
+
+			return({
+				message: 'User updated successfully.',
+				user: updatedUser
 			});
 		} catch (error) {
-			return res.status(500).json({ error: 'Failed to update user.' });
+			console.log(error);
+
+			throw new Error('User could not be updated.');
 		}
 	}
 

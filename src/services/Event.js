@@ -6,11 +6,11 @@ class EventService {
 		const user = await User.findByPk(req.userId);
 
 		if (!user) {
-			return res.status(404).json({ error: 'User not found.' });
+			throw new Error('User not found.');
 		}
 
 		if (user.type !== 'admin' && user.type !== 'org') {
-			return res.status(403).json({ error: 'Permission denied. Only admins and orgs can create events.' });
+			throw new Error('User not authorized.');
 		}
 
 		const { title, description, locale } = req.body;
@@ -34,9 +34,7 @@ class EventService {
 	};
 
 	async update(req, res) {
-		const { events_id } = req.params;
-
-		const event = await Event.findByPk(events_id);
+		const event = await Event.findByPk(req.params.id);
 
 		if (!event) {
 			return res.status(400).json({ error: 'Event does not exist.' });
@@ -44,7 +42,7 @@ class EventService {
 
 		const { title, locale, description } = await event.update(req.body);
 
-		return res.json({
+		return ({
 			title,
 			locale,
 			description,

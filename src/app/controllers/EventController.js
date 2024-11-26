@@ -33,11 +33,13 @@ class EventController {
 
 	async update(req, res) {
 		if (!(await EventSchema.update.isValid(req.body))) {
-			return res.status(400).json({ error: 'Validation failure.' });
+			return res.status(400).json({ error: 'nanananannanan' });
 		}
 
 		try {
 			await EventService.update(req, res);
+
+			return res.status(201).json({ success: 'Event successfully updated.' });
 		} catch (error) {
 			return res.status(400).json({ error: 'The event cannot be updated.' })
 		}
