@@ -27,26 +27,51 @@ class UserService {
 	}
 
 	async update(req, res) {
-		const { email, oldPassword } = req.body;
-
+		const { email, oldPassword, name, cpf } = req.body;
+	
 		const user = await User.findByPk(req.userId);
-
-		if (email !== user.email) {
+	
+		if (email && email !== user.email) {
 			const userExist = await User.findOne({
 				where: { email },
 			});
-
+	
 			if (userExist) {
-				return res.status(400).json({ error: 'User already exists.' })
+				return res.status(400).json({ error: 'User already exists.' });
 			}
 		}
-
+	
+		if (cpf && cpf !== user.cpf) {
+			const cpfRegex = /^[0-9]{11}$/;
+	
+			if (!cpfRegex.test(cpf)) {
+				return res.status(400).json({ error: 'CPF must have exactly 11 digits and only numbers.' });
+			}
+	
+			const cpfExist = await User.findOne({
+				where: { cpf },
+			});
+	
+			if (cpfExist) {
+				return res.status(400).json({ error: 'CPF already exists.' });
+			}
+		}
+	
 		if (oldPassword && !(await user.checkPassword(oldPassword))) {
 			return res.status(401).json({ error: 'Password is incorrect' });
 		}
-
-		return await user.update(req.body);
-	};
+	
+		try {
+			const updatedUser = await user.update(req.body);
+	
+			return res.status(200).json({ 
+				message: 'User updated successfully.', 
+				user: updatedUser 
+			});
+		} catch (error) {
+			return res.status(500).json({ error: 'Failed to update user.' });
+		}
+	}
 
 	async delete(req) {
 		const userRequestingDeletion = await User.findByPk(req.userId);
