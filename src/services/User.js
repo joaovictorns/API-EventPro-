@@ -1,26 +1,30 @@
 import User from "../app/models/User";
+
+import { Op } from 'sequelize';
 class UserService {
-	async store(req, res) {
-		if (req.body.type === 'admin') {
-			const adminExist = await User.findOne({
-				where: { type: 'admin' }
-			});
-
-			if (adminExist) {
-				return res.status(400).json({ error: 'An admin user already exists.' });
+	async store(data) {
+		const userExist = await User.findOne({ 
+			where: {
+				[Op.or]: [{ email: data.email }, { cpf: data.cpf }]
 			}
-		}
-
-		const userExist = await User.findOne({
-			where: { email: req.body.email }
 		});
 
 		if (userExist) {
-			return res.status(400).json({ error: 'User already exists.' })
+			throw new Error('User already exists.');
+		}
+		
+		if (data.type === 'admin') {
+			const adminExist = await User.findOne({ where: { type: 'admin' } });
+
+			if (adminExist) {
+				throw new Error('An admin user already exists.');
+			}
 		}
 
-		return await User.create(req.body);
-	};
+		const user = await User.create(data);
+
+		return user;
+	}
 
 	async update(req, res) {
 		const { email, oldPassword } = req.body;

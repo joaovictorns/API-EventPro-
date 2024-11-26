@@ -3,7 +3,7 @@ import SessionSchema from '../../schema/session';
 class SessionController {
 	async store(req, res) {
 		if (!(await SessionSchema.store.isValid(req.body))) {
-			return res.status(400).json({ error: 'Validation failure.' })
+			return res.status(400).json({ error: 'a failure.' })
 		}
 
 		try {

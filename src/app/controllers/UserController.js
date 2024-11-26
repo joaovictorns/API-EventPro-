@@ -2,16 +2,20 @@ import UserService from '../../services/User';
 import UserSchema from '../../schema/user'
 class UserController {
 	async store(req, res) {
-		if (!await UserSchema.create.isValid(req.body)) {
+		const isValid = await UserSchema.create.isValid(req.body);
+		
+		if (!isValid) {
 			return res.status(400).json({ error: 'Validation failure.' });
 		}
-
+	
 		try {
-			await UserService.store(req, res);
+			const user = await UserService.store(req.body);
+	
+			return res.status(201).json({ success: 'User successfully registered.', user });
 		} catch (error) {
-			return res.status(400).json({ error: 'User already exists.' });
+			return res.status(400).json({ error: error.message });
 		}
-	};
+	}
 
 	async update(req, res) {
 		if (!(await UserSchema.update.isValid(req.body))) {

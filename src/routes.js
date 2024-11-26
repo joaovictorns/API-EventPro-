@@ -6,11 +6,13 @@ import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import EventController from './app/controllers/EventController';
 import SubscriptionController from './app/controllers/SubscriptionController';
+import RestaurantController from './app/controllers/restaurant';
 
 const routes = new Router();
 
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
+routes.post('/restaurants', RestaurantController.store);
 
 routes.put('/users', authMiddleware, UserController.update);
 routes.delete('/users/:id', authMiddleware, UserController.delete);

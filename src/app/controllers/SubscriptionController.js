@@ -4,8 +4,12 @@ class SubscriptionController {
 	async store(req, res) {
 		try {
 			await SubscriptionService.store(req, res);
+
+			return res.status(201).json({ message: 'Successfully registered.' });
 		} catch (error) {
-			return res.status(400).json({ error: 'Unable to register.' });
+			console.log(error)
+
+			return res.status(400).json({ error: error.message });
 		}
 	};
 
