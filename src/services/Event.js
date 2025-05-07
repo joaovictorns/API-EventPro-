@@ -25,9 +25,12 @@ class EventService {
 		return event;
 	};
 
-	async index(req, res) {
+	async index (req) {
 		const events = await Event.findAll({
-			where: { user_id: req.userId, deleted: false },
+			where: {
+				user_id: req.userId,
+				deleted: false
+			},
 		});
 
 		return events;

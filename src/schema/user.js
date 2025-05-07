@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 
 const schema = {
 	create: Yup.object().shape({
-		name: Yup.string().required(),
+		name: Yup.string().transform(sanitizeValue).required(),
 		email: Yup.string().email().required(),
 		password: Yup.string().required().min(6),
 		type: Yup.string().required(),

@@ -6,36 +6,36 @@ class SubscriptionService {
 	async store(req, res) {
 		const { eventId } = req.params;
 		const userId = req.userId;
-	
+
 		const user = await User.findByPk(userId);
-	
+
 		if (!user) {
 			throw new Error('User not found.');
 		}
-	
+
 		if (user.type !== 'participant' && user.type !== 'admin') {
 			throw new Error('Only participants can subscribe to events.');
 		}
-	
+
 		const event = await Event.findByPk(eventId);
-	
+
 		if (!event) {
 			throw new Error('Event not found.');
 		}
-	
+
 		const alreadySubscribed = await Subscription.findOne({
 			where: { event_id: eventId, user_id: userId },
 		});
-	
+
 		if (alreadySubscribed) {
 			throw new Error('You are already subscribed to this event.');
 		}
-	
+
 		const subscription = await Subscription.create({ event_id: eventId, user_id: userId });
-	
+
 		return res.json(subscription);
-	}	
-	
+	}
+
 	async index(req, res) {
 		const { eventId } = req.params;
 		const userId = req.userId;
@@ -80,11 +80,16 @@ class SubscriptionService {
 		const userId = req.userId;
 
 		const subscription = await Subscription.findOne({
-			where: { event_id: eventId, user_id: userId },
+			where: {
+				event_id: eventId,
+				user_id: userId }
 		});
 
 		if (!subscription) {
-			return res.status(404).json({ error: 'Subscription not found.' });
+			return res.status(404).json
+			({
+				error: 'Subscription not found.'
+			});
 		}
 
 		await subscription.destroy();
